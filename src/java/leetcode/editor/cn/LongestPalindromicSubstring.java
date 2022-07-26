@@ -96,7 +96,7 @@ public class LongestPalindromicSubstring {
                 for (int i = 0; i <= (s.length() - len); i++) {
                     int left = i;
                     int right = i + len - 1;
-                    if (s.charAt(left) == s.charAt(right) && (dp[left + 1][right - 1] == true || len==2)) { //这里的len==2的意义是当len==2时无需考虑dp[left + 1][right - 1]
+                    if (s.charAt(left) == s.charAt(right) && (dp[left + 1][right - 1] == true || len == 2)) { //这里的len==2的意义是当len==2时无需考虑dp[left + 1][right - 1]
                         dp[left][right] = true;
                         if (right - left + 1 > maxLen) {
                             maxLen = right - left + 1;
@@ -109,6 +109,45 @@ public class LongestPalindromicSubstring {
             return s.substring(begin, begin + maxLen);
         }
     }
+
+    //解法3：中心扩展法
+    class Solution3 {
+        public String longestPalindrome(String s) {
+            if (s.length()<2){
+                return s;
+            }
+
+            return null;
+
+
+        }
+
+        /**
+         *
+         * @param s
+         * @param centerLeft  左中心点
+         * @param centerRight 右中心点
+         *                    如果回文串的长度是偶数，那么该回文串的中心点就是中间的那两个字符，左中心点就是中间的那两个字符中的左边的那个，右中心点就是右边那个
+         *                    如果回文串的长度是奇数，那么该回文串的中心点就是中间的那一个字符，此时左中心点和右中心点是一样的，都是中间那个字符
+         *                    设定左右两个中心点就是为了适配回文串的长度可能是偶数也可能是奇数 这个情况
+         * @return
+         */
+        public int[] expandAroundCenter(String s,int centerLeft,int centerRight){
+            int[] res=new int[3];
+            if (centerLeft!=centerRight){
+
+            }
+            while (centerLeft>=0 && centerRight<=s.length()-1){
+                if (s.charAt(centerLeft)==s.charAt(centerRight)){
+
+                }
+            }
+
+            return null;
+
+        }
+    }
+
 //leetcode submit region end(Prohibit modification and deletion)
 
 }
