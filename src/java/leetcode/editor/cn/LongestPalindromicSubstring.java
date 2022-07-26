@@ -33,7 +33,10 @@ package leetcode.editor.cn;
 public class LongestPalindromicSubstring {
     public static void main(String[] args) {
         Solution1 solution1 = new LongestPalindromicSubstring().new Solution1();
-        System.out.println(solution1.longestPalindrome("abaaabada"));
+        Solution2 solution2 = new LongestPalindromicSubstring().new Solution2();
+        //System.out.println(solution1.longestPalindrome("abaaabada"));
+        System.out.println(solution2.longestPalindrome("bb"));
+
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
@@ -60,7 +63,7 @@ public class LongestPalindromicSubstring {
                  *  如果上面把res初始化为空字符, max初始化为0 , 那么这里要让j=i , 否则当s的长度为1,就无法返回正确的值
                  */
                 for (int j = i + 1; j < s.length(); j++) {
-                    String temp=s.substring(i, j + 1);
+                    String temp = s.substring(i, j + 1);
                     if (isPalindromic(temp) && ((j - i + 1) > max)) {
                         max = j - i + 1;
                         res = s.substring(i, j + 1);
@@ -74,8 +77,36 @@ public class LongestPalindromicSubstring {
     //解法2：动态规划
     class Solution2 {
         public String longestPalindrome(String s) {
-            return null;
+            if (s.length() < 2) {
+                return s;
+            }
 
+            int maxLen = 1;//记录最长回文子串的长度
+            int begin = 0;//记录最长回文子串的起始位置
+
+            //定义dp数组：dp[i][j] 表示 s[i..j] 是否是回文串
+            boolean[][] dp = new boolean[s.length()][s.length()];
+            //初始化
+            for (int i = 0; i < s.length(); i++) {
+                dp[i][i] = true;
+            }
+
+            //len表示当前子串的长度
+            for (int len = 2; len <= s.length(); len++) {
+                for (int i = 0; i <= (s.length() - len); i++) {
+                    int left = i;
+                    int right = i + len - 1;
+                    if (s.charAt(left) == s.charAt(right) && (dp[left + 1][right - 1] == true || len==2)) { //这里的len==2的意义是当len==2时无需考虑dp[left + 1][right - 1]
+                        dp[left][right] = true;
+                        if (right - left + 1 > maxLen) {
+                            maxLen = right - left + 1;
+                            begin = left;
+                        }
+                    }
+                }
+            }
+
+            return s.substring(begin, begin + maxLen);
         }
     }
 //leetcode submit region end(Prohibit modification and deletion)
