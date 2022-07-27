@@ -34,8 +34,8 @@ public class LongestPalindromicSubstring {
     public static void main(String[] args) {
         Solution1 solution1 = new LongestPalindromicSubstring().new Solution1();
         Solution2 solution2 = new LongestPalindromicSubstring().new Solution2();
-        //System.out.println(solution1.longestPalindrome("abaaabada"));
-        System.out.println(solution2.longestPalindrome("bb"));
+        Solution3 solution3 = new LongestPalindromicSubstring().new Solution3();
+        System.out.println(solution3.longestPalindrome("abaaabada"));
 
     }
 
@@ -113,38 +113,70 @@ public class LongestPalindromicSubstring {
     //解法3：中心扩展法
     class Solution3 {
         public String longestPalindrome(String s) {
-            if (s.length()<2){
+            if (s.length() < 2) {
                 return s;
             }
 
-            return null;
+            int maxLen = 1;
+            String res = s.substring(0, 1);
 
-
+            //这里的i<s.length()-1 意味着以最后一个字符为中心点这种情况直接略过不用考虑，
+            //因为以最后一个字符为中心点的回文串就是这个字符本身，最大长度就是1，对最终结果无影响，
+            //让i<s.length()-1的好处就是下面的expandAroundCenter(s, i, i+1)不用考虑i+1越界的问题
+            for (int i = 0; i < s.length() - 1; i++) {
+                int[] expand = expandAroundCenter(s, i, i);
+                if (expand[0] > maxLen) {
+                    maxLen = expand[0];
+                    res = s.substring(expand[1],expand[2]+1);
+                }
+                expand = expandAroundCenter(s, i, i+1);
+                if (expand[0] > maxLen) {
+                    maxLen = expand[0];
+                    res = s.substring(expand[1],expand[2]+1);
+                }
+            }
+            return res;
         }
 
         /**
-         *
          * @param s
          * @param centerLeft  左中心点
          * @param centerRight 右中心点
+         *                    设定左右两个中心点就是为了适配回文串的长度可能是偶数也可能是奇数
          *                    如果回文串的长度是偶数，那么该回文串的中心点就是中间的那两个字符，左中心点就是中间的那两个字符中的左边的那个，右中心点就是右边那个
          *                    如果回文串的长度是奇数，那么该回文串的中心点就是中间的那一个字符，此时左中心点和右中心点是一样的，都是中间那个字符
-         *                    设定左右两个中心点就是为了适配回文串的长度可能是偶数也可能是奇数 这个情况
-         * @return
+         * @return 返回一个数组，数组的第1个元素是以左/右中心点为对称中心的字符串s的最长回文子串的长度，第2个元素是该最长回文子串的左边界，第三个元素是该最长回文子串的右边界
          */
-        public int[] expandAroundCenter(String s,int centerLeft,int centerRight){
-            int[] res=new int[3];
-            if (centerLeft!=centerRight){
-
+        public int[] expandAroundCenter(String s, int centerLeft, int centerRight) {
+            int[] res = new int[3];
+            //判断左右中心点是否相等，不相等就不是回文串，不用再往两边扩展了
+            if (s.charAt(centerLeft) != s.charAt(centerRight)) {
+                res[0] = 1;
+                res[1] = centerLeft;
+                res[2] = centerRight;
+                return res;
             }
-            while (centerLeft>=0 && centerRight<=s.length()-1){
-                if (s.charAt(centerLeft)==s.charAt(centerRight)){
-
+            while (centerLeft >= 0 && centerRight <= s.length() - 1) {
+                if (s.charAt(centerLeft) == s.charAt(centerRight)) {
+                    centerLeft--;
+                    centerRight++;
+                } else {
+                    break;
                 }
             }
 
-            return null;
+            /**
+             *上述while循环结束，意味着此时的centerLeft或centerRight要么已经越过字符串s的边界了，要么 s.charAt(centerLeft)已经和s.charAt(centerRight)不相等了
+             * 所以 s.charAt(centerLeft+1) 和 s.charAt(centerRight-1) 才是相等的，即是最长回文子串的边界
+             */
+            centerLeft += 1;
+            centerRight -= 1;
 
+            res[0] = centerRight - centerLeft + 1;
+            res[1] = centerLeft;
+            res[2] = centerRight;
+
+            return res;
         }
     }
 
