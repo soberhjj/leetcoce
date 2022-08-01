@@ -63,6 +63,11 @@ import java.time.temporal.Temporal;
 public class MedianOfTwoSortedArrays {
     public static void main(String[] args) {
         Solution solution = new MedianOfTwoSortedArrays().new Solution();
+        Solution2 solution2 = new MedianOfTwoSortedArrays().new Solution2();
+        int nums1[]={1,2,3,4,5};
+        int nums2[]={6,7,8,9,10};
+        System.out.println(solution2.findMedianSortedArrays(nums1,nums2));
+
     }
 
     //leetcode submit region begin(Prohibit modification and deletion)
@@ -98,13 +103,60 @@ public class MedianOfTwoSortedArrays {
             int num2LeftMax = j == 0 ? Integer.MIN_VALUE : nums2[j - 1];
             int num2RightMin = j == n ? Integer.MAX_VALUE : nums2[j];
 
-            if ((m + n) % 2 == 1){
-                return Math.max(num1LeftMax,num2LeftMax);
-            }else {
-                return (double) Math.max(num1LeftMax,num2LeftMax)+Math.min(num1RightMin,num2RightMin)/2;
+            if ((m + n) % 2 == 1) {
+                return Math.max(num1LeftMax, num2LeftMax);
+            } else {
+                return (double) Math.max(num1LeftMax, num2LeftMax) + Math.min(num1RightMin, num2RightMin) / 2;
             }
         }
     }
+
+    class Solution2 {
+        public int findKthSmallest(int[] A, int[] B, int pa, int delta, int k) {
+
+            int pb = (k - 1) - pa;
+
+            int Ai_1 = ((pa == 0) ? Integer.MIN_VALUE : A[pa - 1]);
+            int Bj_1 = ((pb == 0) ? Integer.MIN_VALUE : B[pb - 1]);
+            int Ai = ((pa == A.length) ? Integer.MAX_VALUE : A[pa]);
+            int Bj = ((pb == B.length) ? Integer.MAX_VALUE : B[pb]);
+
+            //满足其中之一条件，就返回
+            if (Bj_1 <= Ai && Ai <= Bj) {
+                return Ai;
+            }
+            if (Ai_1 <= Bj && Bj <= Ai) {
+                return Bj;
+            }
+
+            //delta表示pa的变化量（增加或者减少）
+            //如果 Ai > Bj, 我们要缩小pa的值，即 pa = pa - delta
+            //因为 pb = (k - 1) - pa, 所以，如果delta的值太大，
+            //pa会变得很小，因而 可能会导致 pb > B.length. 所以需要处理一下。
+            // 对于pa = pa + delta 的处理也是一样
+            if (Ai > Bj) {
+                pa = ((k - 1) - (pa - delta) > B.length) ? k - 1 - B.length : pa - delta;
+                return findKthSmallest(A, B, pa, (delta + 1) / 2, k);
+            } else {
+                pa = (pa + delta > A.length) ? A.length : pa + delta;
+                return findKthSmallest(A, B, pa, (delta + 1) / 2, k);
+            }
+        }
+
+        public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+            int k1 = (nums1.length + nums2.length + 1) / 2;
+            int pa1 = Math.min(nums1.length, k1 - 1);
+            int v1 = findKthSmallest(nums1, nums2, pa1, (pa1 + 1) / 2, k1);
+
+            int k2 = (nums1.length + nums2.length + 2) / 2;
+            int pa2 = Math.min(nums1.length, k2 - 1);
+            int v2 = findKthSmallest(nums1, nums2, pa2, (pa2 + 1) / 2, k2);
+
+            return (Double.valueOf(v1)+Double.valueOf(v2))/2;
+        }
+    }
+
+
 //leetcode submit region end(Prohibit modification and deletion)
 
 }
