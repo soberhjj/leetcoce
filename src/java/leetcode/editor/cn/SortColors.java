@@ -46,18 +46,40 @@ package leetcode.editor.cn;
 // Related Topics 数组 双指针 排序 
 // 👍 1393 👎 0
 
-public class SortColors{
-    public static void main(String[] args){
+public class SortColors {
+    public static void main(String[] args) {
         Solution solution = new SortColors().new Solution();
     }
-    
-   //leetcode submit region begin(Prohibit modification and deletion)
-class Solution {
-    public void sortColors(int[] nums) {
 
-
+    //leetcode submit region begin(Prohibit modification and deletion)
+    class Solution {
+        //对撞指针实现解题
+        public void sortColors(int[] nums) {
+            //左指针，用于交换0
+            int p0 = 0;
+            //右指针，用于交换2
+            int p2 = nums.length - 1;
+            //开始从头遍历并交换元素
+            for (int i = 0; i < nums.length; i++) {
+                if (i > p2) {
+                    break;
+                }
+                if (nums[i] == 0) {
+                    nums[i] = nums[p0];
+                    nums[p0] = 0;
+                    p0++;
+                }
+                if (nums[i] == 2) {
+                    nums[i] = nums[p2];
+                    nums[p2] = 2;
+                    p2--;
+                    if (nums[i] != 1) {
+                        i--;
+                    }
+                }
+            }
+        }
     }
-}
 //leetcode submit region end(Prohibit modification and deletion)
- 
+
 }
